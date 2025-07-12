@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items - ReWear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .item-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .filter-active {
+            background-color: #059669;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-green-600">ReWear</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4" id="nav-buttons">
+                    <!-- Navigation will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Browse Items</h1>
+            <p class="text-lg text-gray-600">Discover unique clothing pieces from our community</p>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <!-- Search Bar -->
+            <div class="mb-6">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search items..." 
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <svg class="absolute left-3 top-2.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button class="filter-btn filter-active px-4 py-2 rounded-full text-sm font-medium border" data-filter="all">All Items</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" data-filter="tops">Tops</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" data-filter="bottoms">Bottoms</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" data-filter="dresses">Dresses</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" data-filter="outerwear">Outerwear</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" data-filter="shoes">Shoes</button>
+                <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50" data-filter="accessories">Accessories</button>
+            </div>
+
+            <!-- Sort Options -->
+            <div class="flex items-center space-x-4">
+                <label class="text-sm font-medium text-gray-700">Sort by:</label>
+                <select id="sort-select" class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="newest">Newest First</option>
+                    <option value="points-low">Points: Low to High</option>
+                    <option value="points-high">Points: High to Low</option>
+                    <option value="condition">Best Condition</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Items Grid -->
+        <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Items will be populated by JavaScript -->
+        </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-8">
+            <button id="load-more" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium">
+                Load More Items
+            </button>
+        </div>
+    </div>
+
+    <!-- Item Detail Modal -->
+    <div id="item-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div id="modal-content">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            requireAuth().then(user => {
+                initializeBrowse(user);
+            }).catch(() => {
+                // User not authenticated, redirect handled by requireAuth
+            });
+        });
+
+        function initializeBrowse(user) {
+            // Reload items to get latest data
+            allItems = loadAllItems();
+            
+            // Initialize browse functionality
+            setupEventListeners();
+            displayItems();
+            
+            console.log('Browse initialized with', allItems.length, 'total items');
+        }
+
+        // Load items from global storage - this includes ALL items from ALL users
+        function loadAllItems() {
+            // Get items from global storage
+            let globalItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+            
+            // Sample items data for demo purposes
+            const sampleItems = [
+                {
+                    id: 1,
+                    title: "Vintage Denim Jacket",
+                    category: "outerwear",
+                    size: "M",
+                    condition: "Excellent",
+                    points: 150,
+                    description: "Classic vintage denim jacket in excellent condition. Perfect for layering!",
+                    tags: ["vintage", "denim", "casual"],
+                    owner: "Sarah M.",
+                    ownerEmail: "sarah@example.com",
+                    location: "New York, NY",
+                    image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop",
+                    uploaded: "2024-01-15"
+                },
+                {
+                    id: 2,
+                    title: "Floral Summer Dress",
+                    category: "dresses",
+                    size: "S",
+                    condition: "Good",
+                    points: 120,
+                    description: "Beautiful floral print summer dress, perfect for warm weather occasions.",
+                    tags: ["floral", "summer", "casual"],
+                    owner: "Emma L.",
+                    ownerEmail: "emma@example.com",
+                    location: "Los Angeles, CA",
+                    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
+                    uploaded: "2024-01-14"
+                },
+                {
+                    id: 3,
+                    title: "Designer Sneakers",
+                    category: "shoes",
+                    size: "9",
+                    condition: "Like New",
+                    points: 200,
+                    description: "High-end designer sneakers, barely worn. Original box included.",
+                    tags: ["designer", "sneakers", "athletic"],
+                    owner: "Mike R.",
+                    ownerEmail: "mike@example.com",
+                    location: "Chicago, IL",
+                    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop",
+                    uploaded: "2024-01-13"
+                },
+                {
+                    id: 4,
+                    title: "Wool Winter Coat",
+                    category: "outerwear",
+                    size: "L",
+                    condition: "Excellent",
+                    points: 180,
+                    description: "Warm wool winter coat, perfect for cold weather. Dry cleaned and ready to wear.",
+                    tags: ["wool", "winter", "formal"],
+                    owner: "Lisa K.",
+                    ownerEmail: "lisa@example.com",
+                    location: "Boston, MA",
+                    image: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=400&fit=crop",
+                    uploaded: "2024-01-12"
+                },
+                {
+                    id: 5,
+                    title: "Silk Blouse",
+                    category: "tops",
+                    size: "M",
+                    condition: "Excellent",
+                    points: 90,
+                    description: "Elegant silk blouse perfect for professional or formal occasions.",
+                    tags: ["silk", "professional", "elegant"],
+                    owner: "Anna T.",
+                    ownerEmail: "anna@example.com",
+                    location: "San Francisco, CA",
+                    image: "https://images.unsplash.com/photo-1564257577-0a8c8b0b8b0b?w=400&h=400&fit=crop",
+                    uploaded: "2024-01-11"
+                },
+                {
+                    id: 6,
+                    title: "High-Waisted Jeans",
+                    category: "bottoms",
+                    size: "28",
+                    condition: "Good",
+                    points: 75,
+                    description: "Trendy high-waisted jeans in great condition. Perfect fit and style.",
+                    tags: ["jeans", "trendy", "casual"],
+                    owner: "Jess W.",
+                    ownerEmail: "jess@example.com",
+                    location: "Austin, TX",
+                    image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=400&fit=crop",
+                    uploaded: "2024-01-10"
+                }
+            ];
+            
+            // Check if we need to add sample items to existing global storage
+            let needsUpdate = false;
+            const allItems = [...globalItems]; // Start with existing global items
+            
+            // Add sample items if they don't already exist
+            sampleItems.forEach(sampleItem => {
+                if (!globalItems.find(item => item.id === sampleItem.id)) {
+                    allItems.push(sampleItem);
+                    needsUpdate = true;
+                }
+            });
+            
+            // Update global storage if we added sample items
+            if (needsUpdate) {
+                console.log('Adding missing sample items to global storage from browse');
+                localStorage.setItem('rewear_all_items', JSON.stringify(allItems));
+            }
+            
+            console.log('Loaded', allItems.length, 'items for browsing');
+            return allItems;
+        }
+
+        // Initialize allItems with combined data
+        let allItems = loadAllItems();
+
+        let currentFilter = 'all';
+        let currentSort = 'newest';
+        let displayedItems = [];
+
+
+        function setupEventListeners() {
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active filter
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('filter-active');
+                        b.classList.add('border-gray-300', 'text-gray-700', 'hover:bg-gray-50');
+                    });
+                    this.classList.add('filter-active');
+                    this.classList.remove('border-gray-300', 'text-gray-700', 'hover:bg-gray-50');
+                    
+                    currentFilter = this.dataset.filter;
+                    displayItems();
+                });
+            });
+
+            // Sort dropdown
+            document.getElementById('sort-select').addEventListener('change', function() {
+                currentSort = this.value;
+                displayItems();
+            });
+
+            // Search input
+            document.getElementById('search-input').addEventListener('input', function() {
+                displayItems();
+            });
+
+            // Load more button
+            document.getElementById('load-more').addEventListener('click', function() {
+                // In a real app, this would load more items from the server
+                alert('Load more functionality would fetch additional items from the server!');
+            });
+
+            // Close modal when clicking outside
+            document.getElementById('item-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        }
+
+        function displayItems() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            
+            // Filter items
+            let filteredItems = allItems.filter(item => {
+                const matchesFilter = currentFilter === 'all' || item.category === currentFilter;
+                const matchesSearch = item.title.toLowerCase().includes(searchTerm) || 
+                                    item.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                return matchesFilter && matchesSearch;
+            });
+
+            // Sort items
+            filteredItems.sort((a, b) => {
+                switch(currentSort) {
+                    case 'points-low':
+                        return a.points - b.points;
+                    case 'points-high':
+                        return b.points - a.points;
+                    case 'condition':
+                        const conditionOrder = {'Like New': 3, 'Excellent': 2, 'Good': 1, 'Fair': 0};
+                        return conditionOrder[b.condition] - conditionOrder[a.condition];
+                    case 'newest':
+                    default:
+                        return new Date(b.uploaded) - new Date(a.uploaded);
+                }
+            });
+
+            displayedItems = filteredItems;
+            renderItems();
+        }
+
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+
+            displayedItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card bg-white rounded-lg shadow-md overflow-hidden cursor-pointer';
+                
+                // Use first photo if available, otherwise use default image
+                const imageUrl = item.photos && item.photos.length > 0 
+                    ? item.photos[0].dataUrl 
+                    : item.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop';
+                
+                itemCard.innerHTML = `
+                    <img src="${imageUrl}" alt="${item.title}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2">${item.title}</h3>
+                        <div class="flex justify-between items-center text-sm text-gray-600 mb-2">
+                            <span class="capitalize">${item.category}</span>
+                            <span>Size ${item.size}</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">${item.condition}</span>
+                            <span class="font-bold text-green-600">${item.points} pts</span>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            <p>by ${item.owner}</p>
+                            <p>${item.location || 'Location not set'}</p>
+                        </div>
+                    </div>
+                `;
+                
+                itemCard.addEventListener('click', () => showItemDetail(item));
+                grid.appendChild(itemCard);
+            });
+
+            // Show message if no items found
+            if (displayedItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-gray-500 text-lg">No items found matching your criteria.</p>
+                        <p class="text-gray-400 mt-2">Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function showItemDetail(item) {
+            const modal = document.getElementById('item-modal');
+            const content = document.getElementById('modal-content');
+            
+            // Use first photo if available, otherwise use default image
+            const imageUrl = item.photos && item.photos.length > 0 
+                ? item.photos[0].dataUrl 
+                : item.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=400&fit=crop';
+            
+            // Handle tags - could be string or array
+            let tagsHtml = '';
+            if (item.tags) {
+                const tagsArray = Array.isArray(item.tags) ? item.tags : item.tags.split(',').map(tag => tag.trim());
+                tagsHtml = tagsArray.map(tag => `<span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">${tag}</span>`).join('');
+            }
+            
+            content.innerHTML = `
+                <div class="relative">
+                    <button onclick="closeModal()" class="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    <img src="${imageUrl}" alt="${item.title}" class="w-full h-64 object-cover">
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2">${item.title}</h2>
+                            <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                <span class="capitalize">${item.category}</span>
+                                <span>Size ${item.size}</span>
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">${item.condition}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-green-600">${item.points} pts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h3 class="font-semibold mb-2">Description</h3>
+                        <p class="text-gray-700">${item.description}</p>
+                    </div>
+                    
+                    ${tagsHtml ? `
+                    <div class="mb-4">
+                        <h3 class="font-semibold mb-2">Tags</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${tagsHtml}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="mb-6">
+                        <h3 class="font-semibold mb-2">Owner</h3>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <span class="text-green-600 font-semibold">${item.owner.charAt(0)}</span>
+                            </div>
+                            <div>
+                                <p class="font-medium">${item.owner}</p>
+                                <p class="text-sm text-gray-500">${item.location || 'Location not set'}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="requestSwap(${item.id})" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium">
+                            Request Swap
+                        </button>
+                        <button onclick="redeemWithPoints(${item.id})" class="flex-1 border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white py-3 px-4 rounded-lg font-medium">
+                            Redeem with Points
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function showModal(content) {
+            let modal = document.getElementById('swap-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'swap-modal';
+                modal.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:9999;display:flex;align-items:center;justify-content:center;';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = content;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('swap-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('item-modal').classList.add('hidden');
+        }
+
+        // Swap functionality
+        async function requestSwap(itemId) {
+            const item = allItems.find(i => i.id == itemId);
+            if (!item) return;
+
+            // Check if user is trying to swap their own item
+            if (item.ownerEmail === currentUser.email) {
+                alert("You can't request a swap for your own item!");
+                return;
+            }
+
+            try {
+                // Get current user data
+                const userData = await getCurrentUserData();
+                const userItems = JSON.parse(localStorage.getItem('rewear_user_items') || '[]');
+                
+                if (userItems.length === 0) {
+                    alert('You need to list at least one item before requesting swaps!');
+                    window.location.href = 'dashboard.html';
+                    return;
+                }
+
+                // Create swap request
+                const swapRequest = {
+                    id: Date.now(),
+                    type: 'outgoing',
+                    requestedItem: item,
+                    requesterEmail: currentUser.email,
+                    requesterName: currentUser.displayName || currentUser.email.split('@')[0],
+                    ownerEmail: item.ownerEmail || item.owner,
+                    status: 'pending',
+                    stage: 'requested', // NEW: track swap stage
+                    message: `Hi! I'm interested in swapping for your ${item.title}. Let me know if you'd like to see my items!`,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Save swap request
+                let swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+                swapRequests.push(swapRequest);
+                localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+                // Update user stats
+                userData.pendingRequests = (userData.pendingRequests || 0) + 1;
+                await saveCurrentUserData(userData);
+
+                alert(`Swap request sent for ${item.title}! The owner will be notified.`);
+                closeModal();
+
+            } catch (error) {
+                console.error('Error requesting swap:', error);
+                alert('Failed to send swap request. Please try again.');
+            }
+        }
+
+        async function redeemWithPoints(itemId) {
+            const item = allItems.find(i => i.id == itemId);
+            if (!item) return;
+
+            // Check if user is trying to redeem their own item
+            if (item.ownerEmail === currentUser.email) {
+                alert("You can't redeem your own item!");
+                return;
+            }
+
+            try {
+                // Get current user data
+                const userData = await getCurrentUserData();
+                const currentPoints = userData?.points || 100;
+
+                if (currentPoints < item.points) {
+                    alert(`You need ${item.points - currentPoints} more points to redeem this item. Current balance: ${currentPoints} points.`);
+                    return;
+                }
+
+                if (confirm(`Redeem ${item.title} for ${item.points} points?\n\nYour current balance: ${currentPoints} points\nAfter redemption: ${currentPoints - item.points} points`)) {
+                    // Deduct points
+                    userData.points = currentPoints - item.points;
+                    userData.successfulSwaps = (userData.successfulSwaps || 0) + 1;
+                    await saveCurrentUserData(userData);
+
+                    // Create redemption record
+                    const redemption = {
+                        id: Date.now(),
+                        type: 'redemption',
+                        item: item,
+                        points: item.points,
+                        date: new Date().toISOString(),
+                        userEmail: currentUser.email
+                    };
+
+                    let redemptions = JSON.parse(localStorage.getItem('rewear_redemptions') || '[]');
+                    redemptions.push(redemption);
+                    localStorage.setItem('rewear_redemptions', JSON.stringify(redemptions));
+
+                    alert(`Successfully redeemed ${item.title}! Contact ${item.owner} to arrange pickup. Your new balance: ${userData.points} points.`);
+                    closeModal();
+                }
+
+            } catch (error) {
+                console.error('Error redeeming item:', error);
+                alert('Failed to redeem item. Please try again.');
+            }
+        }
+
+        async function saveItemToStorage(itemData) {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Add owner information to the item
+            itemData.owner = currentUser.displayName || currentUser.email.split('@')[0];
+            itemData.ownerEmail = currentUser.email;
+            itemData.location = 'Location not set'; // Could be enhanced to get user's location
+
+            // Add to user's personal items
+            userItems.push(itemData);
+            localStorage.setItem('rewear_user_items', JSON.stringify(userItems));
+
+            // IMPORTANT: Add to global items list so ALL users can see it
+            let allItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+            allItems.push(itemData);
+            localStorage.setItem('rewear_all_items', JSON.stringify(allItems));
+
+            // Also update the global allItems variable in this page
+            window.allItems = allItems;
+
+            console.log('Item saved to global storage:', itemData.title);
+            console.log('Total items in global storage:', allItems.length);
+
+            // Update user stats
+            const userData = await getCurrentUserData() || {};
+            userData.itemsListed = (userData.itemsListed || 0) + 1;
+            userData.points = (userData.points || 100) + Math.floor(itemData.points * 0.1); // Bonus points for listing
+
+            await saveCurrentUserData(userData);
+        }
+
+        // Show incoming swap requests (call this on dashboard or a dedicated page)
+        function showIncomingSwapRequests() {
+            const swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+            const incoming = swapRequests.filter(req => req.ownerEmail === currentUser.email && req.status === 'pending');
+            if (incoming.length === 0) {
+                alert('No incoming swap requests.');
+                return;
+            }
+            const req = incoming[0];
+
+            const html = `
+                <div id="swap-modal-inner" style="background:#fff;padding:24px;border-radius:12px;max-width:350px;margin:40px auto;">
+                    <p>Status: <b>${req.status}</b></p>
+                    <p>${req.message || `<b>${req.requesterName}</b> wants to swap for your <b>${req.requestedItem.title}</b>.`}</p>
+                    <label class="block mt-4 mb-2">Choose an item from their closet to receive in return:</label>
+                    <select id="swap-requester-item-select" class="w-full mb-4">${itemOptions}</select>
+                    <div class="flex gap-2">
+                        <button onclick="proposeCounterOffer(${req.id})" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Propose Counter-Offer</button>
+                        <button onclick="declineSwapRequest(${req.id})" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Decline</button>
+                    </div>
+                </div>
+            `;
+            showModal(html);
+        }
+
+        function showOutgoingSwapRequests() {
+            const swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+            const outgoing = swapRequests.filter(req => req.requesterEmail === currentUser.email && req.stage === 'counter-offer' && req.status === 'pending');
+            if (outgoing.length === 0) {
+                alert('No outgoing swap requests needing your response.');
+                return;
+            }
+            const req = outgoing[0];
+
+            const html = `
+                <div id="swap-modal-inner" style="background:#fff;padding:24px;border-radius:12px;max-width:350px;margin:40px auto;">
+                    <p>Status: <b>${req.status}</b></p>
+                    <p>${req.message || `<b>${req.ownerEmail}</b> has selected <b>${req.counterItem.title}</b> from your closet in exchange for <b>${req.requestedItem.title}</b>.`}</p>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="finalizeSwap(${req.id})" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Accept Swap</button>
+                        <button onclick="declineSwapRequest(${req.id})" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Decline</button>
+                    </div>
+                </div>
+            `;
+            showModal(html);
+        }
+
+        function showModal(content) {
+            let modal = document.getElementById('swap-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'swap-modal';
+                modal.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:9999;display:flex;align-items:center;justify-content:center;';
+                document.body.appendChild(modal);
+            }
+            modal.innerHTML = content;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('swap-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function proposeCounterOffer(requestId) {
+            const swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+            const reqIndex = swapRequests.findIndex(r => r.id === requestId);
+            if (reqIndex === -1) return alert('Swap request not found.');
+            const req = swapRequests[reqIndex];
+
+            const select = document.getElementById('swap-requester-item-select');
+            if (!select || !select.value) {
+                alert('Please select an item to propose as a counter-offer.');
+                return;
+            }
+            const selectedItemId = select.value;
+
+            const allItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+            const selectedItem = allItems.find(item => item.id == selectedItemId);
+
+            // Update the swap request with the counter-offer
+            swapRequests[reqIndex].stage = 'counter-offer'; // Update stage to "counter-offer"
+            swapRequests[reqIndex].counterItem = selectedItem;
+            swapRequests[reqIndex].message = `Counter-offer: Owner wants your "${selectedItem.title}" in exchange for "${req.requestedItem.title}". Waiting for your response.`;
+            localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+            closeModal();
+            alert('Counter-offer sent! The requester will be notified.');
+        }
+
+        async function finalizeSwap(requestId) {
+            const swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+            const reqIndex = swapRequests.findIndex(r => r.id === requestId);
+            if (reqIndex === -1) return alert('Swap request not found.');
+            const req = swapRequests[reqIndex];
+
+            // Remove both items from the global list
+            const allItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+            const updatedItems = allItems.filter(item => item.id !== req.requestedItem.id && item.id !== req.counterItem.id);
+            localStorage.setItem('rewear_all_items', JSON.stringify(updatedItems));
+
+            // Update the swap request
+            swapRequests[reqIndex].status = 'accepted'; // Update status to "accepted"
+            swapRequests[reqIndex].stage = 'finalized'; // Update stage to "finalized"
+            swapRequests[reqIndex].message = `Swap completed! "${req.requestedItem.title}" and "${req.counterItem.title}" have been exchanged.`;
+            localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+            closeModal();
+            alert('Swap finalized! Both items have been removed from browse.');
+            displayItems();
+        }
+
+        // 3. If User A or B declines, update the message and status:
+        function declineSwapRequest(requestId) {
+            const swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+            const reqIndex = swapRequests.findIndex(r => r.id === requestId);
+            if (reqIndex === -1) return alert('Swap request not found.');
+            const req = swapRequests[reqIndex];
+
+            swapRequests[reqIndex].status = 'declined';
+            swapRequests[reqIndex].stage = 'declined';
+            swapRequests[reqIndex].message = 'Swap declined. No items were exchanged.';
+            localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+            closeModal();
+            alert('Swap declined.');
+        }
+    </script>
+</body>
+</html>

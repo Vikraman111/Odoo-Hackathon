@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - ReWear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .stat-card {
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        .tab-active {
+            border-bottom: 2px solid #059669;
+            color: #059669;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-green-600">ReWear</h1>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4" id="nav-buttons">
+                    <!-- Navigation will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900" id="welcome-message">Welcome back!</h1>
+                    <p class="text-lg text-gray-600 mt-2">Here's what's happening with your ReWear account</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-500">Your Points</div>
+                    <div class="text-3xl font-bold text-green-600" id="header-points">100</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-green-100 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Total Points</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="stat-points">100</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Items Listed</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="stat-items">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-purple-100 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Successful Swaps</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="stat-swaps">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card bg-white p-6 rounded-lg shadow">
+                <div class="flex items-center">
+                    <div class="p-2 bg-yellow-100 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Pending Requests</p>
+                        <p class="text-2xl font-semibold text-gray-900" id="stat-pending">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white rounded-lg shadow mb-8">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">Quick Actions</h2>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button onclick="showAddItemModal()" class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+                        <div class="p-2 bg-green-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-semibold text-gray-900">List New Item</h3>
+                            <p class="text-sm text-gray-500">Add clothing to your collection</p>
+                        </div>
+                    </button>
+
+                    <a href="browse.html" class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                        <div class="p-2 bg-blue-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-semibold text-gray-900">Browse Items</h3>
+                            <p class="text-sm text-gray-500">Find items to swap or redeem</p>
+                        </div>
+                    </a>
+
+                    <button onclick="showSwapRequests()" class="flex items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors">
+                        <div class="p-2 bg-purple-100 rounded-lg mr-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-semibold text-gray-900">Manage Swaps</h3>
+                            <p class="text-sm text-gray-500">View and respond to requests</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="border-b border-gray-200">
+                <nav class="flex space-x-8 px-6">
+                    <button class="tab-btn tab-active py-4 px-1 border-b-2 font-medium text-sm" data-tab="my-items">
+                        My Items
+                    </button>
+                    <button class="tab-btn py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700" data-tab="swap-history">
+                        Swap History
+                    </button>
+                    <button class="tab-btn py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700" data-tab="pending-requests">
+                        Pending Requests
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-6">
+                <!-- My Items Tab -->
+                <div id="my-items-tab" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="my-items-grid">
+                        <!-- Items will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Swap History Tab -->
+                <div id="swap-history-tab" class="tab-content hidden">
+                    <div class="space-y-4" id="swap-history-list">
+                        <!-- Swap history will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Pending Requests Tab -->
+                <div id="pending-requests-tab" class="tab-content hidden">
+                    <div class="space-y-4" id="pending-requests-list">
+                        <!-- Pending requests will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="add-item-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-lg w-full max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">List New Item</h2>
+                    <button onclick="closeAddItemModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Error/Success Messages -->
+                <div id="form-message" class="hidden mb-4 p-3 rounded-md"></div>
+                
+                <form id="add-item-form">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Item Title *</label>
+                        <input 
+                            type="text" 
+                            id="item-title"
+                            name="title"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                            placeholder="e.g., Vintage Denim Jacket"
+                            required>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Category *</label>
+                        <select 
+                            id="item-category"
+                            name="category"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                            required>
+                            <option value="">Select Category</option>
+                            <option value="tops">Tops</option>
+                            <option value="bottoms">Bottoms</option>
+                            <option value="dresses">Dresses</option>
+                            <option value="outerwear">Outerwear</option>
+                            <option value="shoes">Shoes</option>
+                            <option value="accessories">Accessories</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Size *</label>
+                            <input 
+                                type="text" 
+                                id="item-size"
+                                name="size"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                                placeholder="e.g., M, L, 32"
+                                required>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Condition *</label>
+                            <select 
+                                id="item-condition"
+                                name="condition"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                                required>
+                                <option value="">Select Condition</option>
+                                <option value="Like New">Like New</option>
+                                <option value="Excellent">Excellent</option>
+                                <option value="Good">Good</option>
+                                <option value="Fair">Fair</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Description *</label>
+                        <textarea 
+                            id="item-description"
+                            name="description"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                            rows="3" 
+                            placeholder="Describe your item, its features, and any details..."
+                            required></textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Tags (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="item-tags"
+                            name="tags"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                            placeholder="e.g., vintage, casual, summer (comma separated)">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Photos *</label>
+                        <div id="photo-upload-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="mt-4">
+                                <label class="cursor-pointer">
+                                    <span class="mt-2 block text-sm font-medium text-gray-900">Upload photos</span>
+                                    <input 
+                                        type="file" 
+                                        id="item-photos"
+                                        name="photos"
+                                        class="sr-only" 
+                                        multiple 
+                                        accept="image/*"
+                                        required>
+                                </label>
+                                <p class="mt-1 text-xs text-gray-500">PNG, JPG, GIF up to 5MB each (max 5 photos)</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Photo Preview Area -->
+                        <div id="photo-preview" class="mt-4 grid grid-cols-3 gap-2 hidden"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Estimated Points Value</label>
+                        <div class="bg-gray-50 p-3 rounded-md">
+                            <span id="estimated-points" class="text-2xl font-bold text-green-600">0</span>
+                            <span class="text-sm text-gray-500 ml-2">points (calculated based on condition and category)</span>
+                        </div>
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        id="submit-btn"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-md transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        <span id="submit-text">List Item</span>
+                        <span id="submit-loading" class="hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Listing Item...
+                        </span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // First try to restore auth state immediately
+            const authState = JSON.parse(localStorage.getItem('rewear_auth_state') || 'null');
+            
+            if (authState && authState.user && (Date.now() - authState.timestamp < 24 * 60 * 60 * 1000)) {
+                // We have valid auth state, restore immediately
+                auth.currentUser = authState.user;
+                currentUser = authState.user;
+                console.log('Dashboard: Restored user from localStorage:', authState.user.email);
+                
+                // Initialize dashboard immediately
+                initializeDashboard(authState.user);
+                return;
+            }
+            
+            // If no valid stored state, use requireAuth with improved error handling
+            requireAuth().then(user => {
+                console.log('Dashboard: User authenticated via requireAuth:', user.email);
+                initializeDashboard(user);
+            }).catch((error) => {
+                console.log('Dashboard: Authentication failed:', error);
+                // Add a small delay before redirect to prevent flash
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 100);
+            });
+        });
+
+        async function initializeDashboard(user) {
+            // Update user info in header and navigation
+            await updateUserInfo(user);
+            
+            // Setup dashboard functionality
+            setupTabs();
+            await loadUserData(user);
+            populateMyItems();
+            populateSwapHistory();
+            populatePendingRequests();
+            setupAddItemForm();
+        }
+
+        async function updateUserInfo(user) {
+            const userData = await getCurrentUserData();
+            const displayName = user.displayName || userData?.displayName || user.email.split('@')[0];
+            const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            
+            // Update header welcome message
+            document.getElementById('welcome-message').textContent = `Welcome back, ${displayName}!`;
+            
+            // Update navigation (use the same function from firebase-config.js)
+            updateNavigation();
+            
+            // Update points display
+            const pointsDisplay = userData?.points || 100;
+            document.getElementById('header-points').textContent = pointsDisplay.toString();
+            
+            // Update stats
+            updateUserStats(userData);
+        }
+
+        async function loadUserData(user) {
+            // Load user-specific data from localStorage/Firestore
+            const userData = await getCurrentUserData();
+            
+            if (userData) {
+                // Update global user data
+                window.currentUserData = userData;
+            } else {
+                // Create default user data
+                window.currentUserData = {
+                    points: 100,
+                    itemsListed: 0,
+                    successfulSwaps: 0,
+                    pendingRequests: 0
+                };
+            }
+        }
+
+        function updateUserStats(userData) {
+            if (!userData) {
+                userData = {
+                    points: 100,
+                    itemsListed: 0,
+                    successfulSwaps: 0,
+                    pendingRequests: 0
+                };
+            }
+            
+            // Update stats cards
+            document.getElementById('stat-points').textContent = userData.points || 100;
+            document.getElementById('stat-items').textContent = userData.itemsListed || 0;
+            document.getElementById('stat-swaps').textContent = userData.successfulSwaps || 0;
+            document.getElementById('stat-pending').textContent = userData.pendingRequests || 0;
+        }
+
+        // Sample data - in real app, this would come from user's actual data
+        const myItems = [
+            {
+                id: 1,
+                title: "Blue Denim Jacket",
+                category: "outerwear",
+                size: "M",
+                condition: "Good",
+                points: 120,
+                image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop",
+                status: "available",
+                views: 45,
+                likes: 12
+            },
+            {
+                id: 2,
+                title: "Summer Floral Dress",
+                category: "dresses",
+                size: "S",
+                condition: "Excellent",
+                points: 150,
+                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=300&h=300&fit=crop",
+                status: "pending",
+                views: 32,
+                likes: 8
+            }
+        ];
+
+        const swapHistory = [
+            {
+                id: 1,
+                type: "completed",
+                item: "Vintage Band T-Shirt",
+                partner: "Sarah M.",
+                date: "2024-01-10",
+                points: 80
+            },
+            {
+                id: 2,
+                type: "completed",
+                item: "Black Leather Boots",
+                partner: "Mike R.",
+                date: "2024-01-05",
+                points: 200
+            }
+        ];
+
+        const pendingRequests = [
+            {
+                id: 1,
+                type: "incoming",
+                item: "Blue Denim Jacket",
+                requester: "Emma L.",
+                date: "2024-01-15",
+                message: "Hi! I love this jacket. Would you be interested in swapping for my vintage sweater?"
+            },
+            {
+                id: 2,
+                type: "outgoing",
+                item: "Designer Sneakers",
+                owner: "Lisa K.",
+                date: "2024-01-14",
+                status: "pending"
+            }
+        ];
+
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active tab
+                    document.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('tab-active');
+                        b.classList.add('text-gray-500', 'hover:text-gray-700');
+                    });
+                    this.classList.add('tab-active');
+                    this.classList.remove('text-gray-500', 'hover:text-gray-700');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(this.dataset.tab + '-tab').classList.remove('hidden');
+                });
+            });
+        }
+
+        function populateMyItems() {
+            const grid = document.getElementById('my-items-grid');
+            grid.innerHTML = '';
+
+            myItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'bg-gray-50 rounded-lg overflow-hidden';
+                itemCard.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2">${item.title}</h3>
+                        <div class="flex justify-between items-center text-sm text-gray-600 mb-2">
+                            <span class="capitalize">${item.category}</span>
+                            <span>Size ${item.size}</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">${item.condition}</span>
+                            <span class="font-bold text-green-600">${item.points} pts</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+                            <span>${item.views} views</span>
+                            <span>${item.likes} likes</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm">
+                                Edit
+                            </button>
+                            <button class="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(itemCard);
+            });
+        }
+
+        function populateSwapHistory() {
+            const list = document.getElementById('swap-history-list');
+            list.innerHTML = '';
+
+            swapHistory.forEach(swap => {
+                const swapItem = document.createElement('div');
+                swapItem.className = 'bg-gray-50 rounded-lg p-4';
+                swapItem.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-semibold text-gray-900">${swap.item}</h3>
+                            <p class="text-sm text-gray-600">Swapped with ${swap.partner}</p>
+                            <p class="text-xs text-gray-500">${swap.date}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-green-600 font-semibold">+${swap.points} pts</span>
+                            <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mt-1">Completed</div>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(swapItem);
+            });
+        }
+
+        function populatePendingRequests() {
+            const list = document.getElementById('pending-requests-list');
+            list.innerHTML = '';
+
+            // Load real swap requests from localStorage
+            const swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+            const userEmail = currentUser?.email;
+            
+            // Filter requests for current user (both incoming and outgoing)
+            const userRequests = swapRequests.filter(request => 
+                request.requesterEmail === userEmail || request.ownerEmail === userEmail
+            );
+
+            if (userRequests.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No swap requests</h3>
+                        <p class="mt-1 text-sm text-gray-500">Start browsing items to make swap requests!</p>
+                        <div class="mt-6">
+                            <a href="browse.html" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                                Browse Items
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            userRequests.forEach(request => {
+                const requestItem = document.createElement('div');
+                requestItem.className = 'bg-gray-50 rounded-lg p-4';
+                
+                const isIncoming = request.ownerEmail === userEmail;
+                const requestDate = new Date(request.createdAt).toLocaleDateString();
+                
+                if (isIncoming) {
+                    requestItem.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-semibold text-gray-900">${request.requestedItem.title}</h3>
+                                <p class="text-sm text-gray-600">Request from ${request.requesterName}</p>
+                                <p class="text-xs text-gray-500">${requestDate}</p>
+                            </div>
+                            <div class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Incoming</div>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-3">${request.message}</p>
+                        <div class="flex space-x-2">
+                            <button onclick="acceptSwapRequest('${request.id}')" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded text-sm">
+                                Accept
+                            </button>
+                            <button onclick="declineSwapRequest('${request.id}')" class="border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-4 rounded text-sm">
+                                Decline
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    requestItem.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold text-gray-900">${request.requestedItem.title}</h3>
+                                <p class="text-sm text-gray-600">Request to ${request.requestedItem.owner}</p>
+                                <p class="text-xs text-gray-500">${requestDate}</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                    request.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                                    'bg-red-100 text-red-800'
+                                }">${request.status}</span>
+                            </div>
+                            <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Outgoing</div>
+                        </div>
+                        ${request.status === 'pending' ? `
+                            <div class="mt-3">
+                                <button onclick="cancelSwapRequest('${request.id}')" class="text-red-600 hover:text-red-800 text-sm">
+                                    Cancel Request
+                                </button>
+                            </div>
+                        ` : ''}
+                    `;
+                }
+                
+                list.appendChild(requestItem);
+            });
+        }
+
+        // Global variables for item management
+        let selectedPhotos = [];
+        // Load all items globally - this is the central repository for ALL items
+        let allItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+        
+        // Sample items data for demo purposes
+        const sampleItems = [
+            {
+                id: 1,
+                title: "Vintage Denim Jacket",
+                category: "outerwear",
+                size: "M",
+                condition: "Excellent",
+                points: 150,
+                description: "Classic vintage denim jacket in excellent condition. Perfect for layering!",
+                tags: ["vintage", "denim", "casual"],
+                owner: "Sarah M.",
+                ownerEmail: "sarah@example.com",
+                location: "New York, NY",
+                image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop",
+                uploaded: "2024-01-15"
+            },
+            {
+                id: 2,
+                title: "Floral Summer Dress",
+                category: "dresses",
+                size: "S",
+                condition: "Good",
+                points: 120,
+                description: "Beautiful floral print summer dress, perfect for warm weather occasions.",
+                tags: ["floral", "summer", "casual"],
+                owner: "Emma L.",
+                ownerEmail: "emma@example.com",
+                location: "Los Angeles, CA",
+                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
+                uploaded: "2024-01-14"
+            },
+            {
+                id: 3,
+                title: "Designer Sneakers",
+                category: "shoes",
+                size: "9",
+                condition: "Like New",
+                points: 200,
+                description: "High-end designer sneakers, barely worn. Original box included.",
+                tags: ["designer", "sneakers", "athletic"],
+                owner: "Mike R.",
+                ownerEmail: "mike@example.com",
+                location: "Chicago, IL",
+                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=400&fit=crop",
+                uploaded: "2024-01-13"
+            },
+            {
+                id: 4,
+                title: "Wool Winter Coat",
+                category: "outerwear",
+                size: "L",
+                condition: "Excellent",
+                points: 180,
+                description: "Warm wool winter coat, perfect for cold weather. Dry cleaned and ready to wear.",
+                tags: ["wool", "winter", "formal"],
+                owner: "Lisa K.",
+                ownerEmail: "lisa@example.com",
+                location: "Boston, MA",
+                image: "https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400&h=400&fit=crop",
+                uploaded: "2024-01-12"
+            },
+            {
+                id: 5,
+                title: "Silk Blouse",
+                category: "tops",
+                size: "M",
+                condition: "Excellent",
+                points: 90,
+                description: "Elegant silk blouse perfect for professional or formal occasions.",
+                tags: ["silk", "professional", "elegant"],
+                owner: "Anna T.",
+                ownerEmail: "anna@example.com",
+                location: "San Francisco, CA",
+                image: "https://images.unsplash.com/photo-1564257577-0a8c8b0b8b0b?w=400&h=400&fit=crop",
+                uploaded: "2024-01-11"
+            },
+            {
+                id: 6,
+                title: "High-Waisted Jeans",
+                category: "bottoms",
+                size: "28",
+                condition: "Good",
+                points: 75,
+                description: "Trendy high-waisted jeans in great condition. Perfect fit and style.",
+                tags: ["jeans", "trendy", "casual"],
+                owner: "Jess W.",
+                ownerEmail: "jess@example.com",
+                location: "Austin, TX",
+                image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&h=400&fit=crop",
+                uploaded: "2024-01-10"
+            }
+        ];
+        
+        // Check if we need to add sample items to existing global storage
+        let needsUpdate = false;
+        
+        // Add sample items if they don't already exist
+        sampleItems.forEach(sampleItem => {
+            if (!allItems.find(item => item.id === sampleItem.id)) {
+                allItems.push(sampleItem);
+                needsUpdate = true;
+            }
+        });
+        
+        // Update global storage if we added sample items
+        if (needsUpdate) {
+            console.log('Adding missing sample items to global storage from dashboard');
+            localStorage.setItem('rewear_all_items', JSON.stringify(allItems));
+        }
+        
+        // Load user's personal items for dashboard display
+        let userItems = JSON.parse(localStorage.getItem('rewear_user_items') || '[]');
+
+        function setupAddItemForm() {
+            // Setup photo upload functionality
+            setupPhotoUpload();
+            
+            // Setup points calculation
+            setupPointsCalculation();
+            
+            // Setup form submission
+            document.getElementById('add-item-form').addEventListener('submit', handleItemSubmission);
+        }
+
+        function setupPhotoUpload() {
+            const photoInput = document.getElementById('item-photos');
+            const photoUploadArea = document.getElementById('photo-upload-area');
+            const photoPreview = document.getElementById('photo-preview');
+
+            // Handle file selection
+            photoInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                
+                // Validate files
+                if (files.length > 5) {
+                    showMessage('Maximum 5 photos allowed', 'error');
+                    return;
+                }
+
+                selectedPhotos = [];
+                photoPreview.innerHTML = '';
+                photoPreview.classList.add('hidden');
+
+                files.forEach((file, index) => {
+                    // Validate file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showMessage(`File ${file.name} is too large. Maximum 5MB per file.`, 'error');
+                        return;
+                    }
+
+                    // Validate file type
+                    if (!file.type.startsWith('image/')) {
+                        showMessage(`File ${file.name} is not an image.`, 'error');
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        selectedPhotos.push({
+                            file: file,
+                            dataUrl: e.target.result,
+                            name: file.name
+                        });
+
+                        // Create preview
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'relative';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview" class="w-full h-24 object-cover rounded-lg">
+                            <button type="button" onclick="removePhoto(${index})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600">
+                                ×
+                            </button>
+                        `;
+                        photoPreview.appendChild(previewItem);
+                        photoPreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            // Handle drag and drop
+            photoUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                photoUploadArea.classList.add('border-green-400', 'bg-green-50');
+            });
+
+            photoUploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                photoUploadArea.classList.remove('border-green-400', 'bg-green-50');
+            });
+
+            photoUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                photoUploadArea.classList.remove('border-green-400', 'bg-green-50');
+                
+                const files = Array.from(e.dataTransfer.files);
+                photoInput.files = e.dataTransfer.files;
+                photoInput.dispatchEvent(new Event('change'));
+            });
+        }
+
+        function removePhoto(index) {
+            selectedPhotos.splice(index, 1);
+            const photoPreview = document.getElementById('photo-preview');
+            photoPreview.children[index].remove();
+            
+            if (selectedPhotos.length === 0) {
+                photoPreview.classList.add('hidden');
+            }
+        }
+
+        function setupPointsCalculation() {
+            const categorySelect = document.getElementById('item-category');
+            const conditionSelect = document.getElementById('item-condition');
+            const estimatedPoints = document.getElementById('estimated-points');
+
+            function calculatePoints() {
+                const category = categorySelect.value;
+                const condition = conditionSelect.value;
+
+                if (!category || !condition) {
+                    estimatedPoints.textContent = '0';
+                    return;
+                }
+
+                // Points calculation logic
+                const categoryPoints = {
+                    'tops': 80,
+                    'bottoms': 90,
+                    'dresses': 120,
+                    'outerwear': 150,
+                    'shoes': 100,
+                    'accessories': 60
+                };
+
+                const conditionMultiplier = {
+                    'Like New': 1.5,
+                    'Excellent': 1.2,
+                    'Good': 1.0,
+                    'Fair': 0.7
+                };
+
+                const basePoints = categoryPoints[category] || 80;
+                const multiplier = conditionMultiplier[condition] || 1.0;
+                const finalPoints = Math.round(basePoints * multiplier);
+
+                estimatedPoints.textContent = finalPoints.toString();
+            }
+
+            categorySelect.addEventListener('change', calculatePoints);
+            conditionSelect.addEventListener('change', calculatePoints);
+        }
+
+        async function handleItemSubmission(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const submitText = document.getElementById('submit-text');
+            const submitLoading = document.getElementById('submit-loading');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitText.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
+
+            try {
+                // Collect form data
+                const formData = {
+                    title: document.getElementById('item-title').value.trim(),
+                    category: document.getElementById('item-category').value,
+                    size: document.getElementById('item-size').value.trim(),
+                    condition: document.getElementById('item-condition').value,
+                    description: document.getElementById('item-description').value.trim(),
+                    tags: document.getElementById('item-tags').value.trim(),
+                    photos: selectedPhotos,
+                    points: parseInt(document.getElementById('estimated-points').textContent),
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    createdAt: new Date().toISOString(),
+                    status: 'available',
+                    views: 0,
+                    likes: 0,
+                    id: Date.now() // Simple ID generation
+                };
+
+                // Validate required fields
+                if (!formData.title || !formData.category || !formData.size || !formData.condition || !formData.description) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                if (selectedPhotos.length === 0) {
+                    throw new Error('Please upload at least one photo');
+                }
+
+                // Save to localStorage (in real app, this would be Firebase)
+                await saveItemToStorage(formData);
+
+                // Update UI
+                await updateUserStatsData();
+                populateMyItems();
+
+                // Show success message
+                showMessage('Item listed successfully!', 'success');
+
+                // Reset form and close modal
+                resetForm();
+                closeAddItemModal();
+
+            } catch (error) {
+                console.error('Error listing item:', error);
+                showMessage(error.message || 'Failed to list item. Please try again.', 'error');
+            } finally {
+                // Reset loading state
+                submitBtn.disabled = false;
+                submitText.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
+            }
+        }
+
+        async function saveItemToStorage(itemData) {
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Add owner information to the item
+            itemData.owner = currentUser.displayName || currentUser.email.split('@')[0];
+            itemData.ownerEmail = currentUser.email;
+            itemData.location = 'Location not set'; // Could be enhanced to get user's location
+
+            // Add to user's personal items
+            userItems.push(itemData);
+            localStorage.setItem('rewear_user_items', JSON.stringify(userItems));
+
+            // IMPORTANT: Add to global items list so ALL users can see it
+            let allItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+            allItems.push(itemData);
+            localStorage.setItem('rewear_all_items', JSON.stringify(allItems));
+
+            // Also update the global allItems variable in this page
+            window.allItems = allItems;
+
+            console.log('Item saved to global storage:', itemData.title);
+            console.log('Total items in global storage:', allItems.length);
+
+            // Update user stats
+            const userData = await getCurrentUserData() || {};
+            userData.itemsListed = (userData.itemsListed || 0) + 1;
+            userData.points = (userData.points || 100) + Math.floor(itemData.points * 0.1); // Bonus points for listing
+            
+            await saveCurrentUserData(userData);
+        }
+
+        function resetForm() {
+            document.getElementById('add-item-form').reset();
+            selectedPhotos = [];
+            document.getElementById('photo-preview').innerHTML = '';
+            document.getElementById('photo-preview').classList.add('hidden');
+            document.getElementById('estimated-points').textContent = '0';
+            hideMessage();
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('form-message');
+            messageDiv.className = `mb-4 p-3 rounded-md ${type === 'error' ? 'bg-red-100 text-red-700 border border-red-300' : 'bg-green-100 text-green-700 border border-green-300'}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+
+        function hideMessage() {
+            document.getElementById('form-message').classList.add('hidden');
+        }
+
+        function showAddItemModal() {
+            document.getElementById('add-item-modal').classList.remove('hidden');
+            resetForm();
+        }
+
+        function closeAddItemModal() {
+            document.getElementById('add-item-modal').classList.add('hidden');
+            resetForm();
+        }
+
+        // Update populateMyItems to show only current user's items
+        function populateMyItems() {
+            const grid = document.getElementById('my-items-grid');
+            grid.innerHTML = '';
+
+            // Filter items to show only current user's items
+            const currentUserEmail = currentUser?.email;
+            const allGlobalItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+            const myItemsOnly = allGlobalItems.filter(item => item.ownerEmail === currentUserEmail);
+
+            // Also include sample items for demo purposes
+            const allMyItems = [...myItems, ...myItemsOnly];
+
+            if (allMyItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m0 0V9a2 2 0 012-2h2m0 0V7a2 2 0 012-2h2a2 2 0 012 2v2m0 0h2"></path>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No items listed</h3>
+                        <p class="mt-1 text-sm text-gray-500">Get started by listing your first item.</p>
+                        <div class="mt-6">
+                            <button onclick="showAddItemModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                                <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                List New Item
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            allMyItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'bg-gray-50 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow';
+                
+                // Use first photo or default image
+                const imageUrl = item.photos && item.photos.length > 0 
+                    ? item.photos[0].dataUrl 
+                    : item.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=300&fit=crop';
+
+                itemCard.innerHTML = `
+                    <img src="${imageUrl}" alt="${item.title}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-2">${item.title}</h3>
+                        <div class="flex justify-between items-center text-sm text-gray-600 mb-2">
+                            <span class="capitalize">${item.category}</span>
+                            <span>Size ${item.size}</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">${item.condition}</span>
+                            <span class="font-bold text-green-600">${item.points} pts</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+                            <span>${item.views || 0} views</span>
+                            <span>${item.likes || 0} likes</span>
+                        </div>
+                        ${item.tags ? `<div class="mb-3"><div class="flex flex-wrap gap-1">${item.tags.split(',').map(tag => `<span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">${tag.trim()}</span>`).join('')}</div></div>` : ''}
+                        <div class="flex space-x-2">
+                            <button onclick="editItem('${item.id}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm">
+                                Edit
+                            </button>
+                            <button onclick="removeItem('${item.id}')" class="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 py-2 px-3 rounded text-sm">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(itemCard);
+            });
+        }
+
+        function editItem(itemId) {
+            // TODO: Implement edit functionality
+            showMessage('Edit functionality coming soon!', 'info');
+        }
+
+        function removeItem(itemId) {
+            if (confirm('Are you sure you want to remove this item?')) {
+                // Remove from user's personal items
+                userItems = userItems.filter(item => item.id != itemId);
+                localStorage.setItem('rewear_user_items', JSON.stringify(userItems));
+                
+                // IMPORTANT: Also remove from global items list
+                let allItems = JSON.parse(localStorage.getItem('rewear_all_items') || '[]');
+                allItems = allItems.filter(item => item.id != itemId);
+                localStorage.setItem('rewear_all_items', JSON.stringify(allItems));
+                
+                populateMyItems();
+                updateUserStats();
+                showMessage('Item removed successfully!', 'success');
+            }
+        }
+
+        async function updateUserStatsData() {
+            const userData = await getCurrentUserData() || {};
+            userData.itemsListed = userItems.length;
+            await saveCurrentUserData(userData);
+            updateUserStats(userData);
+        }
+
+        function showSwapRequests() {
+            // Switch to pending requests tab
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('tab-active');
+                b.classList.add('text-gray-500', 'hover:text-gray-700');
+            });
+            document.querySelector('[data-tab="pending-requests"]').classList.add('tab-active');
+            document.querySelector('[data-tab="pending-requests"]').classList.remove('text-gray-500', 'hover:text-gray-700');
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById('pending-requests-tab').classList.remove('hidden');
+        }
+
+        // Swap management functions
+        async function acceptSwapRequest(requestId) {
+            try {
+                let swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+                const requestIndex = swapRequests.findIndex(req => req.id == requestId);
+                
+                if (requestIndex === -1) {
+                    alert('Swap request not found!');
+                    return;
+                }
+
+                const request = swapRequests[requestIndex];
+                
+                if (confirm(`Accept swap request for ${request.requestedItem.title} from ${request.requesterName}?`)) {
+                    // Update request status
+                    swapRequests[requestIndex].status = 'accepted';
+                    localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+                    // Update user stats
+                    const userData = await getCurrentUserData() || {};
+                    userData.successfulSwaps = (userData.successfulSwaps || 0) + 1;
+                    userData.points = (userData.points || 100) + Math.floor(request.requestedItem.points * 0.5); // Bonus points
+                    await saveCurrentUserData(userData);
+
+                    // Add to swap history
+                    const swapHistoryItem = {
+                        id: Date.now(),
+                        type: 'completed',
+                        item: request.requestedItem.title,
+                        partner: request.requesterName,
+                        date: new Date().toISOString(),
+                        points: Math.floor(request.requestedItem.points * 0.5)
+                    };
+
+                    let swapHistory = JSON.parse(localStorage.getItem('rewear_swap_history') || '[]');
+                    swapHistory.push(swapHistoryItem);
+                    localStorage.setItem('rewear_swap_history', JSON.stringify(swapHistory));
+
+                    alert(`Swap request accepted! Contact ${request.requesterName} at ${request.requesterEmail} to arrange the exchange.`);
+                    
+                    // Refresh the UI
+                    populatePendingRequests();
+                    populateSwapHistory();
+                    updateUserStats();
+                }
+
+            } catch (error) {
+                console.error('Error accepting swap request:', error);
+                alert('Failed to accept swap request. Please try again.');
+            }
+        }
+
+        async function declineSwapRequest(requestId) {
+            try {
+                let swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+                const requestIndex = swapRequests.findIndex(req => req.id == requestId);
+                
+                if (requestIndex === -1) {
+                    alert('Swap request not found!');
+                    return;
+                }
+
+                const request = swapRequests[requestIndex];
+                
+                if (confirm(`Decline swap request for ${request.requestedItem.title} from ${request.requesterName}?`)) {
+                    // Update request status
+                    swapRequests[requestIndex].status = 'declined';
+                    localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+                    alert('Swap request declined.');
+                    
+                    // Refresh the UI
+                    populatePendingRequests();
+                }
+
+            } catch (error) {
+                console.error('Error declining swap request:', error);
+                alert('Failed to decline swap request. Please try again.');
+            }
+        }
+
+        async function cancelSwapRequest(requestId) {
+            try {
+                let swapRequests = JSON.parse(localStorage.getItem('rewear_swap_requests') || '[]');
+                const requestIndex = swapRequests.findIndex(req => req.id == requestId);
+                
+                if (requestIndex === -1) {
+                    alert('Swap request not found!');
+                    return;
+                }
+
+                const request = swapRequests[requestIndex];
+                
+                if (confirm(`Cancel your swap request for ${request.requestedItem.title}?`)) {
+                    // Remove the request
+                    swapRequests.splice(requestIndex, 1);
+                    localStorage.setItem('rewear_swap_requests', JSON.stringify(swapRequests));
+
+                    // Update user stats
+                    const userData = await getCurrentUserData() || {};
+                    userData.pendingRequests = Math.max((userData.pendingRequests || 1) - 1, 0);
+                    await saveCurrentUserData(userData);
+
+                    alert('Swap request cancelled.');
+                    
+                    // Refresh the UI
+                    populatePendingRequests();
+                    updateUserStats();
+                }
+
+            } catch (error) {
+                console.error('Error cancelling swap request:', error);
+                alert('Failed to cancel swap request. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
